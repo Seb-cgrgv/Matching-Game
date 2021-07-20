@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="style.css">    
+  <script src="tools.js"></script>
+  <title>Matching Game</title>
+</head>
+<body>
+
+<style>
+
+
+.navbar {
+    padding: 20px;
+    color: white;
+}
+
+.navTitle {
+    color: white;
+    text-align: center;
+}
+
+
+#main {
+    padding-top: 20px;
+}
+
+.square {
+    background-image: url(images/0.jpg);
+    height: 65%;
+    width: 65%;
+    object-fit:cover;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px;
+}
+
+#tableContent {
+    padding: 10px;
+    text-align: center;
+}
+
+.board {
+    background-image: url(board21.jpg);
+    background-size: cover;
+    padding: 10px;
+    margin: 20px;
+    object-fit:cover;
+    border-radius: 15px;
+    display:inline;
+}
+
+.newGameButton {
+    height: 100px;
+    width: 100px;
+    background-color: #1ED840;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    border-radius: 90px;
+    border-color: black;
+}
+
+
+
+</style>
+
+
+<nav class="navbar navbar-dark bg-dark">
+  <h1 class="navTitle text-center">Matching Game</h1>
+</nav>
+
+    
+    <div id="main" class="container-fluid row">
+    <div class="col-lg-12 text-center" id="newGameField">
+        
+    </div>
+        <div class="col-lg-3 col-sm-12"></div>
+        <div class="board col-lg-6 col-sm-12">
+            <table>
+                <thead id="tableContent">
+                </thead>
+            </table>
+        </div>
+        </br>
+        <div class="col-lg-3 col-sm-12"></div>
+    </div>
+    <div id="#overview">
+    <div class="container-fluid row">
+        <div class="col-lg-2"></div>
+        
+        <div class="col-lg-8">
+            </br>
+            <h1>Game Rules</h1>
+            <p>
+                This game is a browser-based card matching game that presents the player with cards arranged in a 4x4 grid.
+                </br>
+                </br>
+                The back of each card is a common design shared by all cards. The front contains a distinctive symbol shared by one pair of cards in the deck, thus there are 8 unique symbols shared by 8 pairs of cards in the deck.
+                </br>
+                </br>
+                The objective of the Matching Game is for the player to turn over pairs of matching cards across eight successive turns. In a turn if the player selects two cards whose symbols match those cards, along with those successfully matched in previous turns, will remain up. However, if the player chooses two cards with different symbols they will both be flipped over, obscuring their symbols.
+                </br>
+                </br>
+                The game ends when all eight pairs of matching cards have been revealed. When this occurs a message should be displayed to let the user know they have won the game.
+                </br>
+                </br>
+                A 'New Game' Button gives the player the means to reset the game board.
+            </p>
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+    </div>
+
+
+<div id="footer" class="container-fluid"></div>
+
+
+
+
+
+
+
+<script>
+
+var matches = 2;
+var totalPics = 8;
+var columns = Math.sqrt(matches*totalPics); 
+var rows = columns;
+if(columns % 2 == 0) {} else { // it calculates the right proportions of the field (4x4 or 8x4 or 8x5)
+    var a = Math.ceil(columns)
+    for(var i = (a*2); i > a-1; i--) {
+        for(var j = Math.ceil(a/2); j < a; j++) {
+            if((matches*totalPics)/i == j) {
+                columns = i;
+                rows = j; 
+            }
+        }
+    }
+}
+var picOrder = [];
+var resetElements = [];
+var turn = 0;
+
+
+//==========================================================================
+
+
+startGame()
+function startGame() {
+    // creates the game field
+    var idNumber = 0;
+    for(var i = 0; i < rows; i++) {
+        var a = "<tr>"
+        for(var j = 0; j < columns; j++) {
+            a += '<td class="td"><img onclick="play(this)" src="images/0.jpg" id="square' + idNumber++ + '" class="square"></td>';
+        }
+        a += "</tr>";
+        $("#tableContent").append(a)
+    }
+    // creates a random array with the (number)names of the pics
+    picOrder = [];    
+    for(var k = 0; k < matches; k++) {
+        for(var l = 1; l <= totalPics; l++) {
+            picOrder.push(l)
+            
+        }
+    }
+    shuffleArray(picOrder)
+    // adds the attribute "picnumber" to each square
+    var m = 0;
+    $(".square").each(function() {
+            $(this).attr("picnumber",picOrder[m++])  
+    })
+
+}
+
+
+//==========================================================================
+
+var openCards = 0;
+var lastPic = []; 
+var solvedPairs = 0;
+
+function play(field) {
+    if($(field).hasClass("open")) {return}
+    if(openCards > 1) {return}
+    
+    var currentPic = parseInt($(field).attr("picnumber"));
+    lastPic.push(currentPic)
+    
+    saveField($(field).attr("id"))
+    $(field).attr("src", "images/" + currentPic + ".jpg").addClass("open")
+    openCards += 1;
+    
+    if(openCards > 1) {
+        ++turn;
+        if(lastPic[0] == lastPic[1]) { 
+            lastPic = [];
+            openCards = 0;
+            ++solvedPairs;
+        } else {
+            setTimeout(function() {
+                resetField(2)
+                lastPic = [];
+                openCards = 0;
+                sync(true);
+            ;}, 3000);
+        }
+        if(solvedPairs == totalPics) {
+            alert("You have won the game in " + turn + " turns!!!")
+            newGame()
+        }
+    }
+}
+
+//==========================================================================
+
+function newGame() {
+    $("#newGameField").empty().append('<button class="newGameButton col-lg-2" onclick="GameField()">New Game</button>')
+}
+
+function GameField(){
+    $("#tableContent").empty()   
+    $("#newGameField").empty()
+    openCards = 0;
+    turn = 0;
+    lastPic = []; 
+    solvedPairs = 0;
+    startGame()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+</body>
+</html>
