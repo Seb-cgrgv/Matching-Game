@@ -75,8 +75,8 @@
 @media (max-width: 480px) {
   .maincontainer {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     object-fit:cover;
     border-radius: 2px;
     margin-left: 4px;
