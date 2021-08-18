@@ -53,6 +53,7 @@
 }
 
 @media (max-width: 800px) {
+    
   .maincontainer {
     position: relative;
     width: 75px;
@@ -64,13 +65,18 @@
     margin-bottom: 12px;
     margin-top: 12px;
   }
+    .board {
+        padding: 13px;
+        margin: 13px;  
+        border-radius: 10px;
+    }
 }
 
 @media (max-width: 480px) {
   .maincontainer {
     position: relative;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     object-fit:cover;
     border-radius: 2px;
     margin-left: 4px;
@@ -78,6 +84,11 @@
     margin-bottom: 12px;
     margin-top: 12px;
   }
+    .board {
+        padding: 10px;
+        margin: 10px;  
+        border-radius: 8px;
+    }
 }
 
 
